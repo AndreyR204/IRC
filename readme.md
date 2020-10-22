@@ -1,7 +1,7 @@
 #IRC Client
 Простой IRC клиент для командной строки или использования в составе сторонней программы.
 ## Install
-git clone 
+git clone https://github.com/AndreyR204/IRC.git 
 pip install -r requirements.txt
 ## Usage
 usage: main.py [-h] [--server SERVER] [--port PORT] [--username USERNAME]
