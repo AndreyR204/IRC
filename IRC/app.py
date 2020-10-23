@@ -1,7 +1,6 @@
+import configparser
 import socket
 import threading
-import sys
-import configparser
 
 
 def channel(channel):
