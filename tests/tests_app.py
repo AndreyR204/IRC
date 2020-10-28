@@ -1,11 +1,11 @@
 import unittest
-from IRC import app
+import irc
 
 
 class TestStringMethods(unittest.TestCase):
 
     def test_channel(self):
-        self.assertEqual(app.channel("aaa"), "#aaa")
+        self.assertEqual(irc.channel("aaa"), "#aaa")
 
 
 if __name__ == '__main__':
