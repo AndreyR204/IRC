@@ -1,2 +1,4 @@
 configparser
 unittest
+keyboard
+pytest
