@@ -4,15 +4,21 @@
 git clone https://github.com/AndreyR204/IRC.git 
 pip install -r requirements.txt
 ## Usage
-usage: main.py [-h] [--server SERVER] [--port PORT] [--username USERNAME]
-               --channel CHANNEL
+usage: python -m irc
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --server SERVER, -s SERVER
-                        Server you like to connect
-  --port PORT, -p PORT  Server port
-  --username USERNAME, -u USERNAME
-                        Your username
-  --channel CHANNEL, -c CHANNEL
-                        Channel you like to join
+<default>: /help
+/chcp ENCODING
+/nick NICKNAME
+/help
+/fav
+/server HOSTNAME [PORT]
+/exit
+/pm TARGET TEXT
+/add
+/join CHANNEL [PASSWORD]
+/list
+/names
+/leave
+/quit
+/switch CHANNEL
+
