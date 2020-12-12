@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 from configparser import ConfigParser
 import os
 from irc import errors

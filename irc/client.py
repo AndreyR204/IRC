@@ -7,23 +7,24 @@ import irc.const as const
 
 
 class Client:
-
-    def __init__(self, username, code, favourites):
-        self.username = username
-        self.channel = None
-        self.code = code
+    def __init__(self, nickname: str, encoding: str, favourites: set):
+        self.sock = socket.socket()
+        self.favourites = favourites
+        self.nickname = nickname
+        self.prev_nick = nickname
+        self.code_page = encoding
         self.hostname = None
         self.joined_channels = set()
+        self.current_channel = None
         self.is_connected = False
         self.is_working = True
-        self.favourites = favourites
-        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.command_handler = CommandHandler(self)
 
+    @property
     def cmd_prompt(self):
-        if not self.channel:
-            return f"<{self.username}>: "
-        return f"[{self.channel}] <{self.username}>: "
+        if not self.current_channel:
+            return f"<{self.nickname}>: "
+        return f"[{self.current_channel}] <{self.nickname}>: "
 
     def start_client(self) -> None:
         input_thread = threading.Thread(target=self.wait_for_input)
@@ -33,10 +34,10 @@ class Client:
 
     def wait_for_input(self) -> None:
         while self.is_working:
-            command = self.command_handler.get_text(input(self.cmd_prompt()))
-            execution_result = command().encode(self.code)
+            command = self.command_handler.get_command(input(self.cmd_prompt))
+            execution_result = command().encode(self.code_page)
             if self.is_connected:
-                self.conn.sendall(execution_result)
+                self.sock.sendall(execution_result)
             if command.output:
                 print(command.output)
 
@@ -44,7 +45,7 @@ class Client:
         handler = MessageHandler(self)
         while self.is_working:
             while self.is_connected:
-                data = self.conn.recv(const.BUFFER_SIZE)
+                data = self.sock.recv(const.BUFFER_SIZE)
                 print(handler.parse_response(data))
 
 
@@ -52,26 +53,34 @@ class CommandHandler:
     def __init__(self, client: Client):
         self._client = client
         self.commands = {
-            "/c": com.CodePageCommand,
-            "/n": com.NickCommand,
-            "/h": com.HelpCommand,
-            "/f": com.ShowFavCommand,
-            "/s": com.ConnectCommand,
-            "/e": com.ExitCommand,
-            "/p": com.PrivateMessageCommand,
-            "/a": com.AddToFavCommand,
-            "/j": com.JoinCommand,
-            "/l": com.ListCommand,
-            "/ns": com.NamesCommand,
-            "/lv": com.PartCommand,
-            "/q": com.DisconnectCommand,
-            "/sw": com.SwitchCommand,
+            "/chcp": com.CodePageCommand,
+            "/nick": com.NickCommand,
+            "/help": com.HelpCommand,
+            "/fav": com.ShowFavCommand,
+            "/server": com.ConnectCommand,
+            "/exit": com.ExitCommand,
+            "/pm": com.PrivateMessageCommand,
+            "/add": com.AddToFavCommand,
+            "/join": com.JoinCommand,
+            "/list": com.ListCommand,
+            "/names": com.NamesCommand,
+            "/leave": com.PartCommand,
+            "/quit": com.DisconnectCommand,
+            "/switch": com.SwitchCommand,
         }
 
-    def get_text(self, input_text: str):
+    def get_command(self, input_text: str) -> com.ClientCommand:
         if input_text.startswith("/"):
-            if input_text in self.commands:
-                return self.commands[input_text](self._client)
+            command_parts = input_text.split(" ")
+            command_name = command_parts[0]
+            command_args = command_parts[1:]
+            if command_name in self.commands:
+                return self.commands[command_name](self._client, *command_args)
+
+        elif self._client.current_channel and input_text.rstrip(" "):
+            return com.PrivateMessageCommand(self._client, self._client.current_channel, *input_text.split(" "))
+
+        return com.UnknownCommand(self._client)
 
 
 class MessageHandler:
@@ -97,6 +106,6 @@ class MessageHandler:
         return ""
 
     def parse_response(self, data: bytes) -> str:
-        decoded_data = data.decode(self.client.code)
+        decoded_data = data.decode(self.client.code_page)
         result = [str(message) for message in self.get_messages(decoded_data)]
         return "\n".join(result)
