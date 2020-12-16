@@ -14,7 +14,8 @@ class ClientCommand(abc.ABC):
 
     def validate_args(self) -> bool:
         if len(self._args) + 1 != len(self.usage.split(" ")):
-            self.output = f"Неверное количество аргументов для команды!\nИспользуйте: {self.usage}"
+            self.output = f"Неверное количество аргументов" \
+                          f" для команды!\nИспользуйте: {self.usage}"
             return False
         return True
 
@@ -43,12 +44,13 @@ class PartCommand(ClientCommand):
             return False
 
         if not self._client.is_connected:
-            self.output = "Прежде чем вводить данную команду, подключитесь к серверу!"
+            self.output = "Прежде чем вводить данную команду," \
+                          " подключитесь к серверу!"
             return False
 
         ch_name = self._client.current_channel
         if ch_name not in self._client.joined_channels:
-            self.output = f"Вы не присоединены ни к одному каналу!"
+            self.output = "Вы не присоединены ни к одному каналу!"
             return False
         return True
 
@@ -72,7 +74,8 @@ class PrivateMessageCommand(ClientCommand):
 
     def validate_args(self) -> bool:
         if len(self._args) < 2:
-            self.output = f"Неверное количество аргументов для команды!\nИспользуйте: {self.usage}"
+            self.output = f"Неверное количество аргументов" \
+                          f" для команды!\nИспользуйте: {self.usage}"
             return False
         return True
 
@@ -91,11 +94,13 @@ class JoinCommand(ClientCommand):
 
     def validate_args(self) -> bool:
         if len(self._args) != 1 and len(self._args) != 2:
-            self.output = f"Неверное количество аргументов для команды!\nИспользуйте: {self.usage}"
+            self.output = f"Неверное количество аргументов" \
+                          f" для команды!\nИспользуйте: {self.usage}"
             return False
 
         if not self._client.is_connected:
-            self.output = "Прежде чем вводить данную команду, подключитесь к серверу!"
+            self.output = "Прежде чем вводить данную" \
+                          " команду, подключитесь к серверу!"
             return False
 
         ch_name = self._args[0].lower()
@@ -134,14 +139,15 @@ class DisconnectCommand(ClientCommand):
         self._client.joined_channels = set()
         self._client.current_channel = None
         self._client.sock.shutdown(socket.SHUT_WR)
-        self.output = f"Отключение от сервера..."
+        self.output = "Отключение от сервера..."
 
     def validate_args(self) -> bool:
         if not super().validate_args():
             return False
 
         if not self._client.is_connected:
-            self.output = "Прежде чем вводить данную команду, подключитесь к серверу!"
+            self.output = "Прежде чем вводить данную" \
+                          " команду, подключитесь к серверу!"
             return False
         return True
 
@@ -151,7 +157,8 @@ class SwitchCommand(ClientCommand):
 
     def execute(self, ch_name: str) -> None:
         ch_name = ch_name.lower()
-        if ch_name in self._client.joined_channels and ch_name != self._client.current_channel:
+        if ch_name in self._client.joined_channels\
+                and ch_name != self._client.current_channel:
             self.output = f"Переключение текущего канала на {ch_name}..."
             self._client.current_channel = ch_name
 
@@ -160,7 +167,8 @@ class SwitchCommand(ClientCommand):
             return False
 
         if not self._client.is_connected:
-            self.output = "Прежде чем вводить данную команду, подключитесь к серверу!"
+            self.output = "Прежде чем вводить данную" \
+                          " команду, подключитесь к серверу!"
             return False
 
         ch_name = self._args[0].lower()
@@ -178,10 +186,9 @@ class HelpCommand(ClientCommand):
     usage = "/help"
 
     def execute(self) -> None:
-        help_msg = ''
-        for cmd in self._client.command_handler.commands:
-            help_msg = help_msg + self._client.command_handler.commands[cmd].usage + "\n"
-        self.output = help_msg
+        help_message = [command.usage for command in
+                        self._client.command_handler.commands.values()]
+        self.output = "\n".join(help_message)
 
 
 class ConnectCommand(ClientCommand):
@@ -189,7 +196,8 @@ class ConnectCommand(ClientCommand):
 
     def validate_args(self) -> bool:
         if len(self._args) != 1 and len(self._args) != 2:
-            self.output = f"Неверное количество аргументов для команды!\nИспользуйте: {self.usage}"
+            self.output = f"Неверное количество аргументов" \
+                          f" для команды!\nИспользуйте: {self.usage}"
             return False
 
         if self._client.is_connected:
@@ -202,8 +210,9 @@ class ConnectCommand(ClientCommand):
         self._client.sock.settimeout(10)
         try:
             self._client.sock.connect((hostname, port))
-        except socket.gaierror as e:
-            self.output = f"Не удалось подключиться по заданному адресу: {hostname}"
+        except socket.gaierror:
+            self.output = f"Не удалось подключиться" \
+                          f" по заданному адресу: {hostname}"
             return ""
 
         self._client.sock.settimeout(None)
@@ -238,14 +247,16 @@ class AddToFavCommand(ClientCommand):
             return False
 
         if not self._client.is_connected:
-            self.output = "Прежде чем вводить данную команду, подключитесь к серверу!"
+            self.output = "Прежде чем вводить данную" \
+                          " команду, подключитесь к серверу!"
             return False
 
         return True
 
     def execute(self) -> None:
         self._client.favourites.add(self._client.hostname)
-        self.output = f"Сервер {self._client.hostname} добавлен в список избранных"
+        self.output = f"Сервер {self._client.hostname}" \
+                      f" добавлен в список избранных"
 
 
 class ShowFavCommand(ClientCommand):

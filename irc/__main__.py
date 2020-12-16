@@ -12,7 +12,8 @@ def get_config() -> ConfigParser:
         raise errors.ConfigNotFoundError(os.getcwd())
 
     current_config.read(const.CONFIG_PATH)
-    if not current_config.has_section("Settings") or not current_config.has_section("Servers"):
+    if not current_config.has_section("Settings") \
+            or not current_config.has_section("Servers"):
         raise errors.InvalidConfigError(current_config)
 
     return current_config

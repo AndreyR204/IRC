@@ -1,4 +1,3 @@
-import keyboard
 import socket
 import threading
 from irc import commands as com
@@ -78,7 +77,9 @@ class CommandHandler:
                 return self.commands[command_name](self._client, *command_args)
 
         elif self._client.current_channel and input_text.rstrip(" "):
-            return com.PrivateMessageCommand(self._client, self._client.current_channel, *input_text.split(" "))
+            return com.PrivateMessageCommand(self._client,
+                                             self._client.current_channel,
+                                             *input_text.split(" "))
 
         return com.UnknownCommand(self._client)
 

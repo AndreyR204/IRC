@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 import sys
-import irc.main as main
+import irc.__main__ as main
 from irc.gui.mydesign import ClientWindow
 from irc.client import Client
 

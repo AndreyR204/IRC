@@ -42,7 +42,8 @@ class NoticeMessage(ServerMessage):
 
 
 class PrivateMessage(ServerMessage):
-    expr = re.compile(r":(?P<sender>[^\s!]+)(!.*)? PRIVMSG (?P<target>.+) :(?P<text>.+)")
+    expr = re.compile(r":(?P<sender>[^\s!]+)(!.*)?"
+                      r" PRIVMSG (?P<target>.+) :(?P<text>.+)")
 
     def get_parsed_message(self, sender, target, text) -> str:
         return f"[{target}] <{sender}>: {text}"
@@ -59,7 +60,8 @@ class ModeMessage(ServerMessage):
 
 
 class ServiceMessage(ServerMessage):
-    expr = re.compile(r":(?P<sender>[^\s!]+)(!.*)? (?P<code>\d{3}) \S+ :?(?P<text>.+)")
+    expr = re.compile(r":(?P<sender>[^\s!]+)(!.*)?"
+                      r" (?P<code>\d{3}) \S+ :?(?P<text>.+)")
     CHAN_ERRORS = {442, 470, 471, 473, 474, 475, 477, 478}
     NICK_ERROR = 433
 
