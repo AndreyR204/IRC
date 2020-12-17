@@ -81,6 +81,9 @@ class ClientWindow(QtWidgets.QMainWindow):
             input_text = f"<{self.client.nickname}>: {text}"
             chat = self.tabs_panel.currentWidget().findChild(QtWidgets.QWidget, "chat_content")
             chat.layout().insertWidget(0, QtWidgets.QLabel(input_text))
+            execution_result = command().encode(self.code_page)
+            if self.is_connected:
+                self.sock.sendall(execution_result)
             if command.output:
                 chat.layout().insertWidget(0, QtWidgets.QLabel(command.output))
             self.input_line.clear()
