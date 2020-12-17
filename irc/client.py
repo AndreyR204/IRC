@@ -113,5 +113,6 @@ class MessageHandler:
     def parse_response(self, data: bytes, code=None) -> str:
         if code is None:
             decoded_data = data.decode(self.client.code_page)
-            result = [str(message) for message in self.get_messages(decoded_data)]
+            result = [str(message) for message
+                      in self.get_messages(decoded_data)]
             return "\n".join(result)

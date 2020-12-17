@@ -34,8 +34,8 @@ if __name__ == "__main__":
     try:
         config = get_config()
         client2 = client.Client(config["Settings"]["nickname"],
-                               config["Settings"]["codepage"],
-                               set(config["Servers"].keys()))
+                                config["Settings"]["codepage"],
+                                set(config["Servers"].keys()))
         client2.start_client()
         refresh_config(client2)
     except errors.ApiError as e:

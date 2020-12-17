@@ -1,14 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file '1.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-from irc.client import Client, MessageHandler
+from PyQt5 import QtCore, QtWidgets
+from irc.client import Client
 import threading
 from irc import const
 
