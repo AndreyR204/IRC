@@ -19,24 +19,25 @@ def get_config() -> ConfigParser:
     return current_config
 
 
-def refresh_config() -> None:
-    config["Settings"]["nickname"] = client.username
-    config["Settings"]["codepage"] = client.code
-    for server in client.favourites:
-        config.set("Servers", server)
+def refresh_config(client1) -> None:
+    config1 = get_config()
+    config1["Settings"]["nickname"] = client1.nickname
+    config1["Settings"]["codepage"] = client1.code_page
+    for server in client1.favourites:
+        config1.set("Servers", server)
 
     with open(const.CONFIG_PATH, "w") as file:
-        config.write(file)
+        config1.write(file)
 
 
 if __name__ == "__main__":
     try:
         config = get_config()
-        client = client.Client(config["Settings"]["nickname"],
+        client2 = client.Client(config["Settings"]["nickname"],
                                config["Settings"]["codepage"],
                                set(config["Servers"].keys()))
-        client.start_client()
-        refresh_config()
+        client2.start_client()
+        refresh_config(client2)
     except errors.ApiError as e:
         print(f"Client exception caught - {str(e)}")
     finally:

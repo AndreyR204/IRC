@@ -1,13 +1,12 @@
 from PyQt5.QtWidgets import QApplication
 import sys
-import irc.__main__ as main
-from irc.gui.mydesign import ClientWindow
+import irc.__main__ as mn
 import irc.gui.design as design
 from irc.client import Client
 
 if __name__ == "__main__":
     app = QApplication([])
-    config = main.get_config()
+    config = mn.get_config()
     client = Client(config["Settings"]["nickname"],
                     config["Settings"]["codepage"],
                     set(config["Servers"].keys()))
@@ -15,5 +14,4 @@ if __name__ == "__main__":
     main_window.setup_ui(main_window)
     main_window.show()
     app.exec()
-    sys.exit(main.refresh_config())
-
+    sys.exit(mn.refresh_config(client))

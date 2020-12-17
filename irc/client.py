@@ -18,6 +18,7 @@ class Client:
         self.is_connected = False
         self.is_working = True
         self.command_handler = CommandHandler(self)
+        self.message_handler = MessageHandler(self)
 
     @property
     def cmd_prompt(self):
@@ -98,15 +99,19 @@ class MessageHandler:
 
     def get_messages(self, decoded_data: str):
         for line in decoded_data.split("\r\n"):
-            words = line.split(" ")
-            command_name = words[1].upper()
-            if command_name in self.messages:
-                yield self.messages[command_name](self.client, line)
-            elif command_name.isdigit():
-                yield msg.ServiceMessage(self.client, line)
+            try:
+                words = line.split(" ")
+                command_name = words[1].upper()
+                if command_name in self.messages:
+                    yield self.messages[command_name](self.client, line)
+                elif command_name.isdigit():
+                    yield msg.ServiceMessage(self.client, line)
+            except IndexError:
+                pass
         return ""
 
-    def parse_response(self, data: bytes) -> str:
-        decoded_data = data.decode(self.client.code_page)
-        result = [str(message) for message in self.get_messages(decoded_data)]
-        return "\n".join(result)
+    def parse_response(self, data: bytes, code=None) -> str:
+        if code is None:
+            decoded_data = data.decode(self.client.code_page)
+            result = [str(message) for message in self.get_messages(decoded_data)]
+            return "\n".join(result)

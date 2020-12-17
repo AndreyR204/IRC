@@ -42,7 +42,7 @@ class Ui_ClientWindow(QtWidgets.QMainWindow):
         self.gridLayout.addWidget(self.textEdit, 0, 0, 1, 3)
         ClientWindow.setCentralWidget(self.centralwidget)
         self.Send.clicked.connect(self.send_user_input)
-        self.Help.clicked.connect(self.send_user_input)
+        self.Help.clicked.connect(self.ui_help)
         self.chat = self.textEdit
 
         self.retranslateUi(ClientWindow)
@@ -51,8 +51,7 @@ class Ui_ClientWindow(QtWidgets.QMainWindow):
         out_thread.start()
 
     def get_out(self):
-        client = self.client
-        handler = MessageHandler(self, client)
+        handler = self.client.message_handler
         while self.client.is_working:
             while self.client.is_connected:
                 data = self.client.sock.recv(const.BUFFER_SIZE)
@@ -70,6 +69,9 @@ class Ui_ClientWindow(QtWidgets.QMainWindow):
             if command.output:
                 self.chat.append(command.output)
             self.lineEdit.clear()
+
+    def ui_help(self):
+        self.chat.append(const.GUI_HELP)
 
     def retranslateUi(self, ClientWindow):
         _translate = QtCore.QCoreApplication.translate
