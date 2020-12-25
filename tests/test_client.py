@@ -7,7 +7,8 @@ def test_network_interaction(network_client: Client):
     com.ConnectCommand(network_client, "irc.ircnet.su")()
     assert network_client.is_connected
     assert network_client.hostname == "irc.ircnet.su"
-    assert network_client.sock.recv(1024).startswith(b":irc.ircnet.su NOTICE AUTH")
+    assert network_client.sock.recv(1024).\
+        startswith(b":irc.ircnet.su NOTICE AUTH")
 
 
 @pytest.mark.parametrize(

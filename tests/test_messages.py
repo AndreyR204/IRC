@@ -6,15 +6,22 @@ import irc.commands as com
 @pytest.mark.parametrize(
     "message_type, raw_message, expected_result",
     [
-        (msg.JoinMessage, ":nick!user JOIN :#channel", "nick присоединился к #channel"),
-        (msg.ModeMessage, ":bot!@service MODE #test -i", "bot!@service установил для #test флаг -i"),
-        (msg.ModeMessage, ":nick MODE nick -r", "nick сменил свой флаг на -r"),
-        (msg.NickMessage, ":nick!0.0.0@user NICK new_nick1", "nick сменил ник на new_nick1"),
-        (msg.ServiceMessage, ":irc.ircnet.su 200 target :text", "[irc.ircnet.su] >> text"),
-        (msg.PrivateMessage, ":nick PRIVMSG target :test text", "[target] <nick>: test text")
+        (msg.JoinMessage, ":nick!user JOIN :#channel",
+         "nick присоединился к #channel"),
+        (msg.ModeMessage, ":bot!@service MODE #test -i",
+         "bot!@service установил для #test флаг -i"),
+        (msg.ModeMessage, ":nick MODE nick -r",
+         "nick сменил свой флаг на -r"),
+        (msg.NickMessage, ":nick!0.0.0@user NICK new_nick1",
+         "nick сменил ник на new_nick1"),
+        (msg.ServiceMessage, ":irc.ircnet.su 200 target :text",
+         "[irc.ircnet.su] >> text"),
+        (msg.PrivateMessage, ":nick PRIVMSG target :test text",
+         "[target] <nick>: test text")
     ]
 )
-def test_message_reg_exp(tested_client, message_type, raw_message: str, expected_result: str):
+def test_message_reg_exp(tested_client, message_type,
+                         raw_message: str, expected_result: str):
     message = message_type(tested_client, raw_message)
     assert str(message) == expected_result
 
